@@ -137,8 +137,6 @@ namespace BackendConfiguration.Pn.Services.BackendConfigurationPropertyAreasServ
                 var assignments = await _backendConfigurationPnDbContext.AreaProperties
                     .Where(x => x.WorkflowState != Constants.WorkflowStates.Removed)
                     .Where(x => x.PropertyId == updateModel.PropertyId)
-                    .Include(x => x.Area)
-                    .AsNoTracking()
                     .ToListAsync();
 
                 var assignmentsForCreate = updateModel.Areas
@@ -147,16 +145,19 @@ namespace BackendConfiguration.Pn.Services.BackendConfigurationPropertyAreasServ
 
                 var assignmentsForUpdate = updateModel.Areas
                     .Where(x => x.Id.HasValue)
+                    .Where(x => assignments.First(y => y.Id == x.Id).Checked != x.Activated)
                     .ToList();
 
                 var assignmentsForDelete = assignments
-                    .Where(x => !assignmentsForUpdate.Exists(y => x.Id != y.Id))
+                    .Where(x => !updateModel.Areas.Where(y => y.Id.HasValue).Select(y => y.Id).Contains(x.Id))
                     .ToList();
 
 
                 foreach (var assignmentForCreate in assignmentsForCreate)
                 {
-                    var area = await _backendConfigurationPnDbContext.Areas.FirstOrDefaultAsync(x =>
+                    var area = await _backendConfigurationPnDbContext.Areas
+                        .Include(x => x.AreaRules)
+                        .FirstOrDefaultAsync(x =>
                         x.Name == assignmentForCreate.Name && x.Description == assignmentForCreate.Description);
 
                     var newAssignment = new AreaProperty
@@ -192,6 +193,12 @@ namespace BackendConfiguration.Pn.Services.BackendConfigurationPropertyAreasServ
                                 ProperyAreaAsignmentId = newAssignment.Id,
                             };
                             await assignmentWithFolder.Create(_backendConfigurationPnDbContext);
+
+                            foreach (var areaRule in area.AreaRules.Where(x => x.FolderId != 0))
+                            {
+                                areaRule.FolderId = folder.Id;
+                                await areaRule.Update(_backendConfigurationPnDbContext);
+                            }
                         }
                         else if (area.Type == AreaTypesEnum.Type3)
                         {
@@ -228,6 +235,12 @@ namespace BackendConfiguration.Pn.Services.BackendConfigurationPropertyAreasServ
                             await folderTwo.Create(sdkDbContext);
                             await assignmentWithOneFolder.Create(_backendConfigurationPnDbContext);
                             await assignmentWithTwoFolder.Create(_backendConfigurationPnDbContext);
+
+                            foreach (var areaRule in area.AreaRules.Where(x => x.FolderId != 0))
+                            {
+                                areaRule.FolderId = folderOne.Id;
+                                await areaRule.Update(_backendConfigurationPnDbContext);
+                            }
                         }
                         else if (area.Type == AreaTypesEnum.Type5)
                         {
@@ -292,12 +305,6 @@ namespace BackendConfiguration.Pn.Services.BackendConfigurationPropertyAreasServ
                                 },
                             };
 
-                            //folders = folders
-                            //    .Where(x => !x.FolderTranslations
-                            //        .Select(y => y.Name)
-                            //        .Contains(area.Name))
-                            //    .ToList();
-
                             foreach (var folder in folders)
                             {
                                 await folder.Create(sdkDbContext);
@@ -308,6 +315,12 @@ namespace BackendConfiguration.Pn.Services.BackendConfigurationPropertyAreasServ
                                     ProperyAreaAsignmentId = newAssignment.Id,
                                 };
                                 await assignmentWithFolder.Create(_backendConfigurationPnDbContext);
+                            }
+
+                            foreach (var areaRule in area.AreaRules.Where(x => x.FolderId != 0))
+                            {
+                                areaRule.FolderId = folders.First().Id;
+                                await areaRule.Update(_backendConfigurationPnDbContext);
                             }
                         }
                     }
@@ -351,28 +364,33 @@ namespace BackendConfiguration.Pn.Services.BackendConfigurationPropertyAreasServ
             }
         }
 
-        public async Task<OperationDataResult<AreaModel>> ReadArea(int areaId, int selectedPropertyId)
+        public async Task<OperationDataResult<AreaModel>> ReadArea(int propertyAreaId)
         {
             try
             {
-                var area = await _backendConfigurationPnDbContext.Areas
-                    .Where(x => x.WorkflowState != Constants.WorkflowStates.Removed)
-                    .Where(x => x.Id == areaId)
-                    .FirstOrDefaultAsync();
-
                 var areaProperties = await _backendConfigurationPnDbContext.AreaProperties
                     .Where(x => x.WorkflowState != Constants.WorkflowStates.Removed)
-                    .Where(x => x.AreaId == areaId)
-                    .Where(x => x.PropertyId == selectedPropertyId)
+                    .Where(x => x.Id == propertyAreaId)
                     .Include(x => x.Property)
                     .ThenInclude(x => x.SelectedLanguages)
                     .FirstOrDefaultAsync();
 
+                var area = await _backendConfigurationPnDbContext.Areas
+                    .Where(x => x.WorkflowState != Constants.WorkflowStates.Removed)
+                    .Where(x => x.Id == areaProperties.AreaId)
+                    .FirstOrDefaultAsync();
+
+
                 var workers = await _backendConfigurationPnDbContext.PropertyWorkers
                     .Where(x => x.WorkflowState != Constants.WorkflowStates.Removed)
-                    .Where(x => x.PropertyId == selectedPropertyId)
+                    .Where(x => x.PropertyId == areaProperties.PropertyId)
                     .Select(x => x.WorkerId)
                     .ToListAsync();
+
+                if (!workers.Any())
+                {
+                    return new OperationDataResult<AreaModel>(false, _backendConfigurationLocalizationService.GetString("NotFoundPropertyWorkerAssignments"));
+                }
 
                 var core = await _coreHelper.GetCore();
                 var sdkDbContex = core.DbContextHelper.GetDbContext();

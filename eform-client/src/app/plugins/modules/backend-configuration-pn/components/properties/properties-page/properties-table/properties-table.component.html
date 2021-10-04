@@ -11,7 +11,7 @@
       [tableHeaders]="tableHeaders"
       [stickyHeader]="true"
     ></thead>
-    <tbody id="tableBody">
+    <tbody id="properiesTableBody">
       <tr *ngFor="let property of propertiesModel.entities; let i = index">
         <td id="propertyId">
           {{ property.id }}
@@ -26,9 +26,7 @@
           {{ property.address }}
         </td>
         <td id="propertyLanguages">
-          <ng-container *ngFor="let language of property.languages">
-            {{ getLanguageNameById(language.id) }} | <span></span>
-          </ng-container>
+          {{ getLanguages(property) }}
         </td>
         <td>
           <div class="d-flex flex-row justify-content-center">
