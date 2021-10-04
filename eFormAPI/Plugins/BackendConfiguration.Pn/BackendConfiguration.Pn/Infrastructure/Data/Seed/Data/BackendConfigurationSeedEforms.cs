@@ -475,7 +475,7 @@ namespace BackendConfiguration.Pn.Infrastructure.Data.Seed.Data
 <Main>
 	<Id>142267</Id>
 	<Repeated>0</Repeated>
-	<Label>02. Sikkerhedsudstyr_værnemidler|02. Safety equipment_protective equipment||02. Захисне обладнання_засоби захисту</Label>
+	<Label>02. Sikkerhedsudstyr/værnemidler|02. Safety equipment_protective equipment||02. Захисне обладнання_засоби захисту</Label>
 	<StartDate>2021-01-17</StartDate>
 	<EndDate>2031-01-17</EndDate>
 	<Language>da</Language>
@@ -487,7 +487,7 @@ namespace BackendConfiguration.Pn.Infrastructure.Data.Seed.Data
 	<ElementList>
 		<Element type=""DataElement"">
 			<Id>142267</Id>
-			<Label>02. Sikkerhedsudstyr_værnemidler|02. Safety equipment_protective equipment||02. Захисне обладнання_засоби захисту</Label>
+			<Label>02. Sikkerhedsudstyr/værnemidler|02. Safety equipment_protective equipment||02. Захисне обладнання_засоби захисту</Label>
 			<Description>
 				<![CDATA[Kontrolpunkter sikkerhedsudstyr/værnemidler|Checkpoints safety equipment/protective equipment||Контроль обладнання для забезпечення безпеки/захисне спорядження]]>
 			</Description>
@@ -3075,7 +3075,7 @@ namespace BackendConfiguration.Pn.Infrastructure.Data.Seed.Data
 <Main>
 	<Id>142196</Id>
 	<Repeated>0</Repeated>
-	<Label>13. APV Medarbejder|13. WPA Worker||13. ОРМ Працівника</Label>
+	<Label>13. APV Medarbejer|13. WPA Worker||13. ОРМ Працівника</Label>
 	<StartDate>2020-12-04</StartDate>
 	<EndDate>2030-12-04</EndDate>
 	<Language>da</Language>
@@ -3087,7 +3087,7 @@ namespace BackendConfiguration.Pn.Infrastructure.Data.Seed.Data
 	<ElementList>
 		<Element type=""DataElement"">
 			<Id>142196</Id>
-			<Label>13. APV Medarbejder|13. WPA Worker||13. ОРМ Працівника</Label>
+			<Label>13. APV Medarbejer|13. WPA Worker||13. ОРМ Працівника</Label>
 			<Description>
 				<![CDATA[Tryk for at udfylde arbejdspladsvurdering (APV)<br>|<br>Press to complete workplace assessment (WPA)<br>||<br>Натисніть, щоб завершити оцінку робочого місця (ОРМ)<br>]]>
 			</Description>
