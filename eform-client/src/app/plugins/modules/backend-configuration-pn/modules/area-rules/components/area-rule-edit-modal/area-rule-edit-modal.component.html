@@ -51,6 +51,7 @@
                 <div class="col-12 ng-select-wrapper">
                   <ng-select
                     [items]="
+                      templatesModel.templates &&
                       templatesModel.templates.length > 0
                         ? templatesModel.templates
                         : [
@@ -64,8 +65,10 @@
                     [placeholder]="'Selected template' | translate"
                     bindValue="id"
                     [typeahead]="typeahead"
-                    [(ngModel)]="selectedAreaRule.typeSpecificFields.eformId"
+                    [ngModel]="selectedAreaRule.typeSpecificFields.eformId"
+                    (ngModelChange)="changeEform($event)"
                     id="editRuleEformId"
+                    [clearable]="false"
                   >
                   </ng-select>
                 </div>
@@ -85,6 +88,7 @@
                     bindValue="id"
                     [(ngModel)]="selectedAreaRule.typeSpecificFields.type"
                     id="editRuleType"
+                    [clearable]="false"
                   >
                   </ng-select>
                 </div>
@@ -101,6 +105,7 @@
                     bindValue="id"
                     [(ngModel)]="selectedAreaRule.typeSpecificFields.alarm"
                     id="editRuleAlarm"
+                    [clearable]="false"
                   >
                   </ng-select>
                 </div>
@@ -122,6 +127,7 @@
                       selectedAreaRule.typeSpecificFields.checklistStable
                     "
                     id="editRuleChecklistStable"
+                    [clearable]="false"
                   >
                   </ng-select>
                 </div>
@@ -138,6 +144,7 @@
                     bindValue="id"
                     [(ngModel)]="selectedAreaRule.typeSpecificFields.tailBite"
                     id="editRuleTailBite"
+                    [clearable]="false"
                   >
                   </ng-select>
                 </div>
@@ -162,6 +169,7 @@
                     bindValue="id"
                     [(ngModel)]="selectedAreaRule.typeSpecificFields.dayOfWeek"
                     id="editAreaDayOfWeek"
+                    [clearable]="false"
                   >
                   </ng-select>
                 </div>

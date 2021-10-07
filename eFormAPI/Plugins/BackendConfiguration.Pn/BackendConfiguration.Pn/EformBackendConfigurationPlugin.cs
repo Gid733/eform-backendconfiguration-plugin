@@ -130,9 +130,10 @@ namespace BackendConfiguration.Pn
                         .FirstAsync();
                     areaRule.EformId = eformId;
                 }
-                context.Areas.Add(newArea);
+                //context.Areas.Add(newArea);
                     
-                context.SaveChanges();
+                //context.SaveChanges();
+                await newArea.Create(context);
             }
         }
 
@@ -280,13 +281,13 @@ namespace BackendConfiguration.Pn
                                 new()
                                 {
                                     LocaleName = LocaleNames.German,
-                                    Name = "Ejendomme",
+                                    Name = "",//todo
                                     Language = LanguageNames.German,
                                 },
                                 new()
                                 {
                                     LocaleName = LocaleNames.Danish,
-                                    Name = "",//todo
+                                    Name = "Ejendomme",
                                     Language = LanguageNames.Danish,
                                 },
                                 new()

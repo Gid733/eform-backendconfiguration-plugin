@@ -25,25 +25,26 @@ SOFTWARE.
 namespace BackendConfiguration.Pn.Infrastructure.Models.AreaRules
 {
     using System;
-    using System.Collections.Generic;
+    using Microting.EformBackendConfigurationBase.Infrastructure.Enum;
 
-    public class AreaRulePlanningModel
+    public class AreaInitialFields
     {
-        public int? Id { get; set; }
+        public string EformName { get; set; }
 
-        public int RuleId { get; set; }
-
-        public bool Status { get; set; }
+        public int EformId { get; set; }
 
         public bool SendNotifications { get; set; }
 
-        public DateTime StartDate { get; set; }
+        public int? RepeatEvery { get; set; }
 
-        public int PropertyId { get; set; }
+        public int? RepeatType { get; set; }
 
-        public AreaRuleTypePlanningModel TypeSpecificFields { get; set; }
+        public int? DayOfWeek { get; set; }
 
-        public List<AreaRuleAssignedSitesModel> AssignedSites { get; set; }
-            = new ();
+        public AreaRuleT2TypesEnum? Type { get; set; }
+
+        public AreaRuleT2AlarmsEnum? Alarm { get; set; }
+
+        public DateTime? EndDate { get; set; }
     }
 }

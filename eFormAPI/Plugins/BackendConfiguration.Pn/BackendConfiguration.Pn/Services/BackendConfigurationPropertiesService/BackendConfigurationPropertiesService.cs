@@ -1,4 +1,4 @@
-﻿/*
+/*
 The MIT License (MIT)
 
 Copyright (c) 2007 - 2021 Microting A/S
@@ -66,6 +66,7 @@ namespace BackendConfiguration.Pn.Services.BackendConfigurationPropertiesService
                 // get query
                 var propertiesQuery = _backendConfigurationPnDbContext.Properties
                     .Include(x => x.SelectedLanguages)
+                    .Include(x => x.PropertyWorkers)
                     .Where(x => x.WorkflowState != Constants.WorkflowStates.Removed);
 
                 // add sort
@@ -106,7 +107,8 @@ namespace BackendConfiguration.Pn.Services.BackendConfigurationPropertiesService
                             Languages = x.SelectedLanguages
                                 .Where(y => y.WorkflowState != Constants.WorkflowStates.Removed)
                                 .Select(y => new CommonDictionaryModel {Id = y.LanguageId})
-                                .ToList()
+                                .ToList(),
+                            IsWorkersAssigned = x.PropertyWorkers.Any(y => y.WorkflowState != Constants.WorkflowStates.Removed),
                         }).ToListAsync();
                 }
 
@@ -126,7 +128,7 @@ namespace BackendConfiguration.Pn.Services.BackendConfigurationPropertiesService
             try
             {
                 var core = await _coreHelper.GetCore();
-                var sdkDbContext = core.DbContextHelper.GetDbContext();
+                //var sdkDbContext = core.DbContextHelper.GetDbContext();
 
                 var newProperty = new Property
                 {
@@ -152,16 +154,12 @@ namespace BackendConfiguration.Pn.Services.BackendConfigurationPropertiesService
                     await selectedTranslate.Create(_backendConfigurationPnDbContext);
                 }
 
-                var folder = new Folder
-                {
-                    FolderTranslations = new List<FolderTranslation>()
+                newProperty.FolderId = await core.FolderCreate(
+                    new List<KeyValuePair<string, string>>
                     {
-                        new() {Name = propertyCreateModel.Name, LanguageId = 1}
-                    }
-                };
-                await folder.Create(sdkDbContext);
-
-                newProperty.FolderId = folder.Id;
+                        new("da", propertyCreateModel.Name),
+                    },
+                    new List<KeyValuePair<string, string>> { new("da", ""), }, null); ;
                 await newProperty.Update(_backendConfigurationPnDbContext);
 
                 return new OperationResult(true, _backendConfigurationLocalizationService.GetString("SuccessfullyCreatingProperties"));
